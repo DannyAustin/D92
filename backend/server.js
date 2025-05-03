@@ -25,7 +25,9 @@ app.use(cors({
       'http://localhost:80',
       'http://localhost:3000',
       'https://d92.onrender.com',
-      'http://d92.onrender.com'
+      'http://d92.onrender.com',
+      'https://d92-frontend.onrender.com',
+      'http://d92-frontend.onrender.com'
     ];
     
     if (allowedOrigins.indexOf(origin) !== -1) {
@@ -84,8 +86,9 @@ app.post('/api/auth/login', (req, res) => {
       res.cookie('token', token, {
         httpOnly: true,
         maxAge: 3600000, // 1 hour
-        sameSite: 'lax', // Changed from 'strict' to 'lax' for better cross-origin support
-        secure: process.env.NODE_ENV === 'production' // Only use secure in production
+        sameSite: 'none', // Changed to 'none' for cross-origin requests
+        secure: true, // Always use secure in production
+        domain: '.onrender.com' // Allow cookie to be shared across subdomains
       });
       
       return res.status(200).json({ 
