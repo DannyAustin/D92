@@ -30,6 +30,21 @@ axios.interceptors.response.use(
   }
 );
 
+// Add request interceptor to include token in headers
+axios.interceptors.request.use(
+  config => {
+    // Get token from cookie
+    const token = document.cookie.split('; ').find(row => row.startsWith('token='));
+    if (token) {
+      config.headers.Authorization = `Bearer ${token.split('=')[1]}`;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
+
 export const login = async (username, password) => {
   try {
     const response = await axios.post('/api/auth/login', { username, password });
@@ -45,7 +60,8 @@ export const logout = async () => {
     const response = await axios.get('/api/auth/logout');
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: 'Logout failed' };
+    console.error('Logout error:', error);
+    throw error;
   }
 };
 
@@ -54,7 +70,8 @@ export const verifyAuth = async () => {
     const response = await axios.get('/api/auth/verify');
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: 'Verification failed' };
+    console.error('Auth verification error:', error);
+    throw error;
   }
 };
 
@@ -63,7 +80,8 @@ export const getDashboardContent = async () => {
     const response = await axios.get('/api/dashboard');
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: 'Failed to fetch dashboard content' };
+    console.error('Dashboard content error:', error);
+    throw error;
   }
 };
 

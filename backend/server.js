@@ -86,9 +86,8 @@ app.post('/api/auth/login', (req, res) => {
       res.cookie('token', token, {
         httpOnly: true,
         maxAge: 3600000, // 1 hour
-        sameSite: 'none', // Changed to 'none' for cross-origin requests
-        secure: true, // Always use secure in production
-        domain: '.onrender.com' // Allow cookie to be shared across subdomains
+        sameSite: 'none',
+        secure: true
       });
       
       return res.status(200).json({ 
