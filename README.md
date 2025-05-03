@@ -19,8 +19,6 @@ A Single Page Application (SPA) that displays the latest news from UNC Charlotte
 - **Data Visualization**: D3.js
 - **Web Server**: NGINX
 
-## Setup Instructions
-
 ### Prerequisites
 
 - Node.js (v14 or higher)
@@ -28,6 +26,3 @@ A Single Page Application (SPA) that displays the latest news from UNC Charlotte
 - MongoDB
 - NGINX
 
-### Backend Setup
-
-1. Navigate to the backend directory:
