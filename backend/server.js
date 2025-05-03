@@ -23,6 +23,7 @@ app.use(cors({
     const allowedOrigins = [
       'http://localhost',
       'http://localhost:80',
+      'http://localhost:3000',
       'https://d92.onrender.com',
       'http://d92.onrender.com'
     ];
@@ -30,6 +31,7 @@ app.use(cors({
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.log('CORS blocked origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -62,25 +64,48 @@ app.get('/', (req, res) => {
 
 // Routes
 app.post('/api/auth/login', (req, res) => {
-  const { username, password } = req.body;
-  
-  if (username === USER.username && password === USER.password) {
-    const token = jwt.sign(
-      { id: 1, username },
-      process.env.JWT_SECRET || 'a658d1dcef1aedc5e138cde64b9394aa745f0544c61fa73c859315618382f257',
-      { expiresIn: '1h' }
-    );
+  try {
+    const { username, password } = req.body;
     
-    res.cookie('token', token, {
-      httpOnly: true,
-      maxAge: 3600000, // 1 hour
-      sameSite: 'strict'
+    if (!username || !password) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Username and password are required' 
+      });
+    }
+    
+    if (username === USER.username && password === USER.password) {
+      const token = jwt.sign(
+        { id: 1, username },
+        process.env.JWT_SECRET || 'a658d1dcef1aedc5e138cde64b9394aa745f0544c61fa73c859315618382f257',
+        { expiresIn: '1h' }
+      );
+      
+      res.cookie('token', token, {
+        httpOnly: true,
+        maxAge: 3600000, // 1 hour
+        sameSite: 'lax', // Changed from 'strict' to 'lax' for better cross-origin support
+        secure: process.env.NODE_ENV === 'production' // Only use secure in production
+      });
+      
+      return res.status(200).json({ 
+        success: true, 
+        message: 'Login successful',
+        user: { username }
+      });
+    }
+    
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Invalid credentials' 
     });
-    
-    return res.status(200).json({ success: true, message: 'Login successful' });
+  } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error' 
+    });
   }
-  
-  return res.status(401).json({ success: false, message: 'Invalid credentials' });
 });
 
 app.get('/api/auth/logout', (req, res) => {
