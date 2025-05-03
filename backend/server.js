@@ -25,11 +25,11 @@ const USER = {
 };
 
 // Connect to MongoDB (optional for this implementation since we're using hardcoded data)
-mongoose.connect("mongodb://127.0.0.1:27017/db2", {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log("MongoDB connected"))
+.then(() => console.log("MongoDB connected to Atlas"))
 .catch(err => {
   console.error("MongoDB connection error:", err);
   process.exit(1);
