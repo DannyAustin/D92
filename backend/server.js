@@ -13,11 +13,29 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-const cors = require('cors');
 
+// CORS configuration
 app.use(cors({
-  origin: 'https://d92.onrender.com',
-  credentials: true
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost',
+      'http://localhost:80',
+      'https://d92.onrender.com',
+      'http://d92.onrender.com'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
 
 // Hardcoded user credentials (in a real app, these would be in the database and encrypted)
@@ -27,11 +45,11 @@ const USER = {
 };
 
 // Connect to MongoDB (optional for this implementation since we're using hardcoded data)
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/db2", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log("MongoDB connected to Atlas"))
+.then(() => console.log("MongoDB connected"))
 .catch(err => {
   console.error("MongoDB connection error:", err);
   process.exit(1);
