@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Set default API URL if environment variable is not set
-const API_URL = process.env.REACT_APP_API_URL || 'https://d92.onrender.com';
+// Set the API URL
+const API_URL = 'https://d92.onrender.com';
 
 // Configure axios to include credentials (cookies)
 axios.defaults.withCredentials = true;
