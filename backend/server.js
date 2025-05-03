@@ -13,8 +13,10 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+const cors = require('cors');
+
 app.use(cors({
-  origin: ['http://localhost:3001', 'http://localhost'],
+  origin: 'https://d92.onrender.com',
   credentials: true
 }));
 
